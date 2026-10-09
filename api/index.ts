@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import express from 'express';
 import { AppModule } from '../src/app.module.js';
@@ -10,12 +11,16 @@ function init() {
   if (!ready) {
     ready = (async () => {
       const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+      app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
       app.enableCors({
         origin: process.env.FRONTEND_URL,
         credentials: true,
       });
       await app.init();
-    })();
+    })().catch((e) => {
+      ready = null; 
+      throw e;
+    });
   }
   return ready;
 }
