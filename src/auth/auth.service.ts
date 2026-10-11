@@ -14,7 +14,11 @@ export class AuthService {
   ) {}
 
   private sign(user: { id: number; email: string }) {
-    return this.jwt.signAsync({ sub: user.id, email: user.email, type: 'user' });
+    return this.jwt.signAsync({
+      sub: user.id,
+      email: user.email,
+      type: 'user',
+    });
   }
 
   async register(dto: RegisterDto) {
@@ -24,15 +28,24 @@ export class AuthService {
       const user = await this.users.create({ ...rest, passwordHash });
       return { user, accessToken: await this.sign(user) };
     } catch (e) {
-      if (isUniqueViolation(e)) throw new ConflictException('Email already registered');
+      if (isUniqueViolation(e))
+        throw new ConflictException('Email already registered');
       throw e;
     }
   }
 
   async login(dto: LoginDto) {
     const found = await this.users.findByEmail(dto.email);
-    const ok = found?.isActive && (await argon2.verify(found.passwordHash, dto.password));
-    if (!found || !ok) throw new UnauthorizedException('Invalid credentials');
+    if (!found || !found.isActive)
+      throw new UnauthorizedException('Invalid credentials');
+
+    let ok = false;
+    try {
+      ok = await argon2.verify(found.passwordHash, dto.password);
+    } catch {
+      ok = false; 
+    }
+    if (!ok) throw new UnauthorizedException('Invalid credentials');
 
     const { passwordHash, ...user } = found;
     return { user, accessToken: await this.sign(user) };
