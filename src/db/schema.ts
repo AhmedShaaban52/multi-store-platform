@@ -7,6 +7,7 @@ export const users = pgTable('users', {
   firstName: text('first_name').notNull(),
   lastName: text('last_name').notNull(),
   isActive: boolean('is_active').notNull().default(true),
+  isSuperAdmin: boolean('is_super_admin').notNull().default(false),
 });
 
 export const stores = pgTable('stores', {

@@ -17,6 +17,7 @@ import { ProductsController } from './products/products.controller.js';
 import { CustomersController } from './customers/customers.controller.js';
 import { OrdersController } from './orders/orders.controller.js';
 import { StoreMembersController } from './store-members/store-members.controller.js';
+import { AdminModule } from './admin/admin.module.js';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { StoreMembersController } from './store-members/store-members.controller
     ProductsModule,
     CustomersModule,
     OrdersModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

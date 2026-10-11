@@ -11,6 +11,7 @@ export const safeUserColumns = {
   firstName: users.firstName,
   lastName: users.lastName,
   isActive: users.isActive,
+  isSuperAdmin: users.isSuperAdmin,
 };
 
 @Injectable()
